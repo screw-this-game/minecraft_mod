@@ -43,7 +43,7 @@ public class EventSubscriber {
         if (event.phase == TickEvent.Phase.END) return;
         if (event.side.isServer() && event.world.getGameTime() % 100 == 0) {
             UUID clientID = WorldData.get(event.world).clientID;
-            if (clientID != null) ScrewThisGame.LOGGER.info(clientID.toString());
+            if (clientID != null) requestHelper.getEffects(event.world);
             else                  ScrewThisGame.LOGGER.error("Not connected!");
 
         }
