@@ -130,6 +130,7 @@ public class HTTPRequestHelper {
     public static class GetClientIDBody {
         public String status;
         public UUID clientId;
+        public ArrayList<String> capabilities;
     }
 
     public static class GetEffectsBody {
