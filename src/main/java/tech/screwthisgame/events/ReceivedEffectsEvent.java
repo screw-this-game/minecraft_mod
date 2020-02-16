@@ -2,7 +2,7 @@ package tech.screwthisgame.events;
 
 import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Event;
-import tech.screwthisgame.HTTPRequestHelper;
+import tech.screwthisgame.util.HTTPRequestHelper;
 
 public class ReceivedEffectsEvent extends Event {
     public final HTTPRequestHelper.GetEffectsBody result;

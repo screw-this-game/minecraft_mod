@@ -1,9 +1,10 @@
-package tech.screwthisgame;
+package tech.screwthisgame.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import tech.screwthisgame.ScrewThisGame;
 import tech.screwthisgame.data.WorldData;
 import tech.screwthisgame.events.BackendConnectionEvent;
 import tech.screwthisgame.events.ReceivedEffectsEvent;
@@ -78,6 +79,41 @@ public class HTTPRequestHelper {
                 MinecraftForge.EVENT_BUS.post(new ReceivedEffectsEvent(result, world));
             }
         });
+    }
+
+    public void sendEffectsToServer(World world) {
+        UUID clientID = WorldData.get(world).clientID;
+        if (clientID == null) {
+            ScrewThisGame.LOGGER.error("Trying to send effects with no client ID!");
+            return;
+        }
+        Request request = new Request.Builder()
+                .url(String.format("https://stg-api.monotron.me/frontend/effects/%s?effectName=%s", clientID.toString()))
+                .put(RequestBody.create(MediaType.parse("application/json"), ""))
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                ScrewThisGame.LOGGER.error(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Response response) {
+                if (response.code() != 200) {
+                    ScrewThisGame.LOGGER.warn(String.format("Bad response code for getEffects: %d", response.code()));
+                    return;
+                }
+                GetEffectsBody result;
+                try {
+                    result = mapper.readValue(response.body().string(), GetEffectsBody.class);
+                } catch(IOException e) {
+                    ScrewThisGame.LOGGER.warn(e);
+                    return;
+                }
+                MinecraftForge.EVENT_BUS.post(new ReceivedEffectsEvent(result, world));
+            }
+        });
+
     }
 
     public static class GetClientIDBody {

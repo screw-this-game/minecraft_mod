@@ -2,15 +2,15 @@ package tech.screwthisgame.events;
 
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import tech.screwthisgame.HTTPRequestHelper;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import tech.screwthisgame.util.HTTPRequestHelper;
 import tech.screwthisgame.ScrewThisGame;
 import tech.screwthisgame.data.WorldData;
 
@@ -53,16 +53,24 @@ public class EventSubscriber {
     public static void onBackendConnection(BackendConnectionEvent event) {
         WorldData data = WorldData.get(event.world);
 
-        if (!event.success)
+        if (!event.success) {
             ScrewThisGame.LOGGER.warn("BackendConnectionEvent failure!");
-        else
-            data.clientID = event.result.clientId;
+            return;
+        }
         data.setConnectionInfo(event.result.status, event.result.clientId);
+        ScrewThisGame.LOGGER.info("(onBackend) HERE IT IS:");
+        ScrewThisGame.LOGGER.info(event.result.clientId.toString());
+        //requestHelper.sendEffectsToServer(event.world);
     }
 
     @SubscribeEvent
     public static void onReceiveEffects(ReceivedEffectsEvent event) {
         WorldData data = WorldData.get(event.world);
         data.addQueuedEvents(event.result.effects);
+        ScrewThisGame.LOGGER.info("(onReceive) HERE IT IS:");
+        ScrewThisGame.LOGGER.info(event.result.effects.toString());
+        for (String effect : event.result.effects) {
+            ScrewThisGame.effectMap.get(effect).Act((ServerWorld) event.world);
+        }
     }
 }
