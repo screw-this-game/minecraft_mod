@@ -1,5 +1,6 @@
 package tech.screwthisgame.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.*;
 import net.minecraft.world.World;
@@ -11,18 +12,28 @@ import tech.screwthisgame.events.ReceivedEffectsEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class HTTPRequestHelper {
     static final OkHttpClient client = new OkHttpClient();
     static final ObjectMapper mapper = new ObjectMapper();
 
     public void getClientID(World world) {
-        Request request = new Request.Builder()
-                .url("https://stg-api.monotron.me/client/register")
-                .header("X-Client-Type", "MINECRAFT")
-                .post(RequestBody.create(MediaType.parse("application/json"), ""))
-                .build();
+        PutCapabilities caps = new PutCapabilities();
+        caps.capabilities = new ArrayList<>(ScrewThisGame.effectMap.keySet());
+        Request request = null;
+        try {
+            request = new Request.Builder()
+                    .url("https://stg-api.monotron.me/client/register")
+                    .header("X-Client-Type", "MINECRAFT")
+                    .post(RequestBody.create(MediaType.parse("application/json"), mapper.writeValueAsString(caps)))
+                    .build();
+        } catch (JsonProcessingException e) {
+            ScrewThisGame.LOGGER.error(e);
+            return;
+        }
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
@@ -124,5 +135,9 @@ public class HTTPRequestHelper {
     public static class GetEffectsBody {
         public String status;
         public ArrayList<String> effects;
+    }
+
+    public static class PutCapabilities {
+        public ArrayList<String> capabilities;
     }
 }

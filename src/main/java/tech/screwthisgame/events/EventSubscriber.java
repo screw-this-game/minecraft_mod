@@ -43,7 +43,6 @@ public class EventSubscriber {
             UUID clientID = WorldData.get(event.world).clientID;
             if (clientID != null) requestHelper.getEffects(event.world);
             else                  ScrewThisGame.LOGGER.error("Not connected!");
-
         }
     }
 
@@ -68,6 +67,9 @@ public class EventSubscriber {
         ScrewThisGame.LOGGER.info("(onReceive) HERE IT IS:");
         ScrewThisGame.LOGGER.info(event.result.effects.toString());
         for (String effect : event.result.effects) {
+            if (!ScrewThisGame.effectMap.containsKey(effect)) {
+                ScrewThisGame.LOGGER.error("Getting effect that we cannot produce: " + effect);
+            }
             ScrewThisGame.effectMap.get(effect).Act((ServerWorld) event.world);
         }
     }
