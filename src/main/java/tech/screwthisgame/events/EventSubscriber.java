@@ -6,10 +6,8 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import tech.screwthisgame.util.HTTPRequestHelper;
 import tech.screwthisgame.ScrewThisGame;
 import tech.screwthisgame.data.WorldData;
@@ -19,7 +17,7 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = ScrewThisGame.MODID)
 public class EventSubscriber {
 
-    static HTTPRequestHelper requestHelper = new HTTPRequestHelper();
+    static final HTTPRequestHelper requestHelper = new HTTPRequestHelper();
 
     @SubscribeEvent
     public static void onServerStart(FMLServerStartedEvent event) {

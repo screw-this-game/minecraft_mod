@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class HTTPRequestHelper {
-    static OkHttpClient client = new OkHttpClient();
-    static ObjectMapper mapper = new ObjectMapper();
+    static final OkHttpClient client = new OkHttpClient();
+    static final ObjectMapper mapper = new ObjectMapper();
 
     public void getClientID(World world) {
         Request request = new Request.Builder()
@@ -31,7 +31,7 @@ public class HTTPRequestHelper {
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onResponse(Response response) {
                 if (response.code() != 200) {
                     ScrewThisGame.LOGGER.warn(String.format("Bad response code for getClientID: %d", response.code()));
                 }
@@ -88,7 +88,7 @@ public class HTTPRequestHelper {
             return;
         }
         Request request = new Request.Builder()
-                .url(String.format("https://stg-api.monotron.me/frontend/effects/%s?effectName=%s", clientID.toString()))
+                .url(String.format("https://stg-api.monotron.me/frontend/effects/%s?effectName=%s", clientID.toString(), ""))
                 .put(RequestBody.create(MediaType.parse("application/json"), ""))
                 .build();
         client.newCall(request).enqueue(new Callback() {

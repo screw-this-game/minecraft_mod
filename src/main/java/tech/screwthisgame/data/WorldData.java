@@ -2,17 +2,13 @@ package tech.screwthisgame.data;
 
 import net.minecraft.nbt.*;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.common.util.Constants;
 import tech.screwthisgame.ScrewThisGame;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Queue;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

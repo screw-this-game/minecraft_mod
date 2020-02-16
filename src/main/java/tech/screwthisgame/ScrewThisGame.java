@@ -1,10 +1,9 @@
 package tech.screwthisgame;
 
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.TNTEntity;
-import net.minecraft.entity.monster.*;
-import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.Mod;
@@ -18,7 +17,6 @@ import tech.screwthisgame.effects.PotionEffect;
 import tech.screwthisgame.effects.SummonCreatureEffect;
 
 import java.util.HashMap;
-import java.util.function.Consumer;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(ScrewThisGame.MODID)
@@ -69,15 +67,20 @@ public class ScrewThisGame
             return String.format(command, coords.getX()+2, coords.getY(), coords.getZ()+2, coords.getX()-2, coords.getY()+3, coords.getZ()-2);
         }));
 
-        effectMap.put("potionDizzy", new PotionEffect(new EffectInstance(Effects.NAUSEA, 100)));
-        effectMap.put("potionPoison", new PotionEffect(new EffectInstance(Effects.POISON, 100)));
-        effectMap.put("potionWither", new PotionEffect(new EffectInstance(Effects.WITHER, 100)));
-        effectMap.put("potionBlind", new PotionEffect(new EffectInstance(Effects.BLINDNESS, 100)));
-        effectMap.put("potionHunger", new PotionEffect(new EffectInstance(Effects.HUNGER, 100)));
-        effectMap.put("potionFatigue", new PotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 100)));
-        effectMap.put("potionUnluck", new PotionEffect(new EffectInstance(Effects.UNLUCK, 100)));
-        effectMap.put("potionSlowness", new PotionEffect(new EffectInstance(Effects.SLOWNESS, 100)));
-        effectMap.put("potionBadOmen", new PotionEffect(new EffectInstance(Effects.BAD_OMEN, 100)));
-    }
+        effectMap.put("summonLightning", world -> { for (ServerPlayerEntity player : world.getPlayers()) {
+            BlockPos pos = player.getPosition();
+            LightningBoltEntity lightning = new LightningBoltEntity(world, pos.getX(), pos.getY(), pos.getZ(), false);
+            world.addEntity(lightning);
+        }});
 
+        effectMap.put("potionDizzy", new PotionEffect(Effects.NAUSEA));
+        effectMap.put("potionPoison", new PotionEffect(Effects.POISON));
+        effectMap.put("potionWither", new PotionEffect(Effects.WITHER));
+        effectMap.put("potionBlind", new PotionEffect(Effects.BLINDNESS));
+        effectMap.put("potionHunger", new PotionEffect(Effects.HUNGER));
+        effectMap.put("potionFatigue", new PotionEffect(Effects.MINING_FATIGUE));
+        effectMap.put("potionUnluck", new PotionEffect(Effects.UNLUCK));
+        effectMap.put("potionSlowness", new PotionEffect(Effects.SLOWNESS));
+        effectMap.put("potionBadOmen", new PotionEffect(Effects.BAD_OMEN));
+    }
 }
